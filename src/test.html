@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Découper une image en morceaux</title>
+<style>
+:root {
+    --container-size: 600px;
+    --container-size2: 300px;
+    --number-pieces: 3;
+}
+
+.container1 {
+    display: grid;
+    grid-template-columns: repeat(var(--number-pieces), 1fr);
+    grid-template-rows: repeat(var(--number-pieces), 1fr);
+    width: var(--container-size2);
+    height: var(--container-size2);
+    border-radius: 20px;
+    float: left; /* Ajout pour aligner horizontalement */
+    border: 2px black solid;
+    gap: 1px;
+}
+
+.container2 {
+    display: grid;
+    grid-template-columns: repeat(var(--number-pieces), 1fr);
+    grid-template-rows: repeat(var(--number-pieces), 1fr);
+    width: var(--container-size);
+    height: var(--container-size);
+    border-radius: 20px;
+    float: left; /* Ajout pour aligner horizontalement */
+    border: 2px black solid;
+    gap: 1px;
+}
+
+.image {
+    background-size: calc(100% * var(--number-pieces)) calc(100% * var(--number-pieces));
+    cursor: pointer;
+}
+
+.pieces {
+    background-color: green;
+}
+
+.piece-correcte {
+    border: 1px yellow solid ;
+}
+
+button {
+    margin-top: 30px;
+}
+</style>
+</head>
+<body>
+<input type="file" accept="image/*" onchange="chargerImage(event)">
+<div class="container1" id="container1"></div> <!-- Premier container -->
+<div class="container2" id="container2">
+</div>
+<button onclick="melangerMorceaux()">Mélanger</button>
+<script>
+const numberPieces = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--number-pieces'));
+let imageOriginale; // Variable pour stocker l'image originale
+let nombreDePieces = numberPieces * numberPieces;
+
+// Sélection de la div container
+let containers2 = document.querySelector('#container2');
+
+let pieceIndex = 0;
+// Boucle pour créer les divs "pieces" en fonction de la valeur de la variable
+for (let i = 0; i < nombreDePieces; i++) {
+  // Création d'une nouvelle div
+  let divPiece = document.createElement('div');
+  // Ajout de la classe "pieces" à la nouvelle div
+  divPiece.classList.add('pieces');
+  divPiece.id = 'puzzle_' + pieceIndex++;
+  divPiece.setAttribute('ondrop', 'drop(event)');
+  divPiece.setAttribute('ondragover', 'allowDrop(event)');
+  // Ajout de la nouvelle div à l'intérieur de la div container
+  containers2.appendChild(divPiece);
+}
+
+function chargerImage(event) {
+    const fichier = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = new Image();
+        image.onload = function() {
+            const containerSize = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--container-size2'));
+            const numberPieces = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--number-pieces'));
+            const container1 = document.getElementById('container1'); // Premier container
+            container1.innerHTML = ''; // Efface les morceaux précédents
+            let pieceIndex = 0;
+            let morceauSize = containerSize / numberPieces;
+            for (let i = 0; i < numberPieces; i++) {
+                for (let j = 0; j < numberPieces; j++) {
+                    const morceau1 = document.createElement('div'); // Premier container
+                    morceau1.className = 'image';
+                    morceau1.style.backgroundImage = 'url("' + image.src + '")';
+                    morceau1.style.backgroundPosition = -j * morceauSize + 'px ' + -i * morceauSize + 'px';
+                    morceau1.style.backgroundOrigin = 'border-box';
+                    morceau1.style.width = morceauSize + 'px';
+                    morceau1.style.height = morceauSize + 'px';
+                    morceau1.setAttribute('draggable', true);
+                    morceau1.setAttribute('ondragstart', 'drag(event)');
+                    morceau1.id = 'piece_' + pieceIndex++;
+                    container1.appendChild(morceau1);
+                }
+            }
+            imageOriginale = image; // Stocke l'image originale
+        };
+        image.src = e.target.result;
+    };
+    reader.readAsDataURL(fichier);
+}
+
+function melangerMorceaux() {
+    var container1 = document.getElementById('container1'); // Premier container
+    var morceaux1 = Array.from(container1.children);
+    morceaux1.sort(function() { return 0.5 - Math.random() });
+    morceaux1.forEach(function(morceau) {
+        container1.appendChild(morceau); // Redistribuer les morceaux dans le premier container
+    });
+}
+
+function verifierGagne() {
+    const container2 = document.getElementById('container2'); // Deuxième container avec les pièces placées par l'utilisateur
+
+    // Récupérer toutes les divs avec la classe "pieces" dans le container2
+    const pieces = Array.from(container2.querySelectorAll('.pieces'));
+
+    // Parcourir chaque pièce pour vérifier si son ID correspond à l'ID de son enfant avec la classe "image"
+    for (let i = 0; i < pieces.length; i++) {
+        const piece = pieces[i];
+        const pieceID = piece.id; // ID de la div avec la classe "pieces"
+        const imageEnfant = piece.querySelector('.image'); // Rechercher l'enfant avec la classe "image"
+        
+        // Vérifier si l'enfant avec la classe "image" existe et si son ID correspond à l'ID de la pièce
+        if (imageEnfant && compareIds(pieceID, imageEnfant.id)) {
+            piece.classList.add('piece-correcte'); // Ajouter la classe si la pièce est correctement placée
+            continue; // Si les IDs correspondent, passer à la pièce suivante
+        } else {
+            piece.classList.remove('piece-correcte'); // Retirer la classe si la pièce n'est pas correctement placée
+            console.log("Le jeu n'est pas encore terminé.");
+            return; // Si les IDs ne correspondent pas pour au moins une pièce, le jeu n'est pas terminé
+        }
+    }
+
+    // Si toutes les pièces sont correctement placées, le jeu est gagné
+    console.log("Félicitations, vous avez gagné !");
+}
+
+
+// Fonction pour comparer les chiffres dans les IDs
+function compareIds(pieceId, imageId) {
+    // Extraire les chiffres de l'ID de la pièce et de l'ID de l'image
+    const pieceNum = parseInt(pieceId.match(/\d+/)[0]);
+    const imageNum = parseInt(imageId.match(/\d+/)[0]);
+
+    // Comparer les chiffres extraits
+    return pieceNum === imageNum;
+}
+
+
+function drag(event) {
+    event.dataTransfer.setData("text", event.target.id);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+function drop(event) {
+    event.preventDefault();
+    let data = event.dataTransfer.getData("text");
+    let target = event.target;
+    
+    // Vérifier si la cible est une case vide
+    if (target.classList.contains('pieces') && target.children.length === 0) {
+        // Ajouter la pièce déplacée dans la case cible
+        target.appendChild(document.getElementById(data));
+        
+        // Récupérer les informations sur le conteneur de destination
+        const containerSize = parseInt(getComputedStyle(target.parentElement).width);
+        const numberPieces = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--number-pieces'));
+        
+        // Calculer la taille des pièces et la position du background
+        const pieceSize = containerSize / numberPieces;
+        const pieceIndex = parseInt(data.split('_')[1]); // Récupérer l'index de la pièce déplacée
+        const rowIndex = Math.floor(pieceIndex / numberPieces); // Calculer la ligne de la pièce dans le conteneur source
+        const colIndex = pieceIndex % numberPieces; // Calculer la colonne de la pièce dans le conteneur source
+        
+        // Calculer la position du background de la pièce dans le conteneur cible
+        const backgroundPosX = -colIndex * pieceSize;
+        const backgroundPosY = -rowIndex * pieceSize;
+        
+        // Mettre à jour le style de la pièce déplacée
+        document.getElementById(data).style.width = pieceSize + 'px';
+        document.getElementById(data).style.height = pieceSize + 'px';
+        document.getElementById(data).style.backgroundSize = containerSize + 'px ' + containerSize + 'px';
+        document.getElementById(data).style.backgroundPosition = backgroundPosX + 'px ' + backgroundPosY + 'px';
+        
+        verifierGagne(); // Vérifier si le joueur a gagné après chaque déplacement
+    }
+}
+
+
+
+
+</script>
+</body>
+</html>

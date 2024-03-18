@@ -1,0 +1,9 @@
+.puzzle {
+    display: grid;
+    grid-template-columns: repeat(var(--nombre-colonnes), 1fr);
+    grid-template-rows: repeat(var(--nombre-lignes), 1fr);
+    gap: 1px;
+    width: 400px;
+    height: 400px;
+    border: 2px black solid;
+  }
