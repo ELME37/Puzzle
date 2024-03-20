@@ -175,6 +175,8 @@ function drop(event) {
     event.preventDefault();
     let data = event.dataTransfer.getData("text");
     let target = event.target;
+
+    console.log("drop")
     
     // Vérifier si la cible est une case vide
     if (target.classList.contains('pieces') && target.children.length === 0) {

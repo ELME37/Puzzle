@@ -1,37 +1,73 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boîtes Flexbox</title>
-  <style>
-    .container {
-      width: 300px;
-      overflow-x: auto;
-      white-space: nowrap; /* Empêche le retour à la ligne des éléments internes */
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Galerie d'images</title>
+<style>
+  .image-container {
+    position: relative;
+    width: 200px; /* Largeur de votre miniature */
+    height: 150px; /* Hauteur de votre miniature */
+  }
 
-    .box {
-      width: 50px;
-      height: 50px;
-      background-color: #ccc; /* Couleur de fond pour visualiser les boîtes */
-      margin-right: 10px; /* Marge entre les boîtes */
-      display: inline-block; /* Utiliser inline-block pour s'aligner horizontalement */
-    }
-  </style>
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    transition: transform 1s ease-in-out;
+  }
+
+  .image-container::after {
+  content: "Agrandir";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 20px;
+  color: yellow;
+  transition: opacity 0.3s ease-in-out;
+}
+
+@keyframes opacity {
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes opacity2 {
+  0%,50%,75% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.image-container:hover::after {
+  animation: opacity 0.3s ease-in-out forwards;
+}
+
+.image-container:not(:hover)::after {
+  animation: opacity2 1s ease-in-out forwards;
+}
+
+  .image-container img:hover {
+    transform-origin: top left;
+    transform: scale(4);
+  }
+
+  .image-container img:not(:hover) {
+  transform-origin: top left;
+  transform: scale(1);
+}
+
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-    <div class="box"></div>
-  </div>
+
+<div class="image-container">
+  <img src="../src/assets/images/nina.png" alt="Miniature de l'image">
+</div>
+
 </body>
 </html>

@@ -1,4 +1,23 @@
 .container__pieces {
     overflow-x: auto;
     white-space: nowrap;
+    margin-top: 30px;
 }
+
+.miniature {
+    width: 600px;
+}
+
+/* Si la largeur est plus grande que la hauteur */
+@media (min-aspect-ratio: 16/9) {
+    .miniature {
+      aspect-ratio: 16/9; /* Utilise l'aspect ratio 16:9 */
+    }
+  }
+  
+  /* Si la hauteur est plus grande que la largeur */
+  @media (max-aspect-ratio: 3/4) {
+    .miniature {
+      aspect-ratio: 3/4; /* Utilise l'aspect ratio 3:4 */
+    }
+  }

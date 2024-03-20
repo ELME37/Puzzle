@@ -1,8 +1,8 @@
 .piece {
     display: inline-block;
-    width: 50px;
-    height: 50px;
-    background-color: green;
-    border: 2px black solid;
+    width: calc(var(--piece-size) * 1px);
+    height: calc(var(--piece-size) * 1px);
     margin-right: 20px;
+    background-size: calc(100% * var(--nombre-pieces)) calc(100% * var(--nombre-pieces));
+    cursor: grab;
 }

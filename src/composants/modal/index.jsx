@@ -13,10 +13,13 @@ function Modal({ isOpen, onClose, onFormSubmit }) {
   };
 
   const handleSubmit = (formData) => {
-    // Utilisez les valeurs actuelles de nombreColonnes et nombreLignes depuis formData
-    const { nombreColonnes, nombreLignes } = formData;
-    onFormSubmit({ nombreColonnes, nombreLignes, selectedImage });
-    onClose(); // Fermer le modal après la soumission
+    const { nombrePieces } = formData;
+    if (nombrePieces && selectedImage) {
+      onFormSubmit({ nombrePieces, selectedImage });
+      onClose();
+    } else {
+      alert('Veuillez remplir tous les champs.');
+    }
   };
 
   return (

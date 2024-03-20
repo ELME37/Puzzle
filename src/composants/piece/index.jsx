@@ -1,20 +1,27 @@
-// src/components/PuzzleGame.js
 import React from 'react';
 import './styles.css';
 
-export default function Piece ({ props }) {
+export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, nombrePieces, pieceSize }) {
 
+    const handleDragStart = (event) => {
+        onDragStart(event);
+        event.dataTransfer.setData("text", event.target.id);
+      };
+      
   return (
     <div className="piece" 
-        /*style={{
-            backgroundImage: `url("${props.imageUrl}")`,
-            backgroundPosition: `${-props.x * props.size}px ${-props.y * props.size}px`,
-            width: `${props.size}px`,
-            height: `${props.size}px`,
+        style={{
+          '--nombre-pieces': nombrePieces,
+          '--piece-size': pieceSize,
+            backgroundImage: `url("${imageUrl}")`,
+            backgroundPosition: backgroundPosition,
+            backgroundOrigin: "border-box",
+            /*backgroundPosition: `${-props.x * props.size}px ${-props.y * props.size}px`,*/
         }}
-        draggable
-        onDragStart={props.onDragStart}
-        id={props.id}*/>
+        id={id}
+        draggable={true}
+        onDragStart={handleDragStart}
+        >
     </div>
   );
 };
