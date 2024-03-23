@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../composants/modal';
 import Puzzle from '../../composants/puzzle';
 import Piece from '../../composants/piece';
@@ -10,9 +10,83 @@ export default function Game() {
   const [nombrePieces, setNombrePieces] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
   const [ratioImage, setRatioImage] = useState(null);
+  const [containerSize, setContainerSize] = useState(600);
 
-  const containerSize = 600;
+  const maxWidth = 600;
   const pieceSize = 100;
+
+  let aspectRatio = '';
+ 
+  if (ratioImage >= 0) {
+    if (ratioImage <= 50) {
+      aspectRatio = 1/1;
+    } else {
+      aspectRatio = 9/16;
+    }
+  } else {
+    aspectRatio = 4/3;
+  }
+
+  useEffect(() => {
+  
+    const updateContainerSize = () => {
+      const size = Math.min(Math.floor(1 * window.innerWidth), maxWidth);
+      setContainerSize(size);
+    };
+
+    updateContainerSize();
+
+    window.addEventListener('resize', updateContainerSize);
+
+    return () => {
+      window.removeEventListener('resize', updateContainerSize);
+    };
+
+  }, []);
+
+  useEffect(() => {
+
+    if (nombrePieces && containerSize) {
+      const pieceElements = document.querySelectorAll('.piece');
+      pieceElements.forEach((pieceElement) => {
+        const pieceIndex = parseInt(pieceElement.id.split('_')[1]);
+        const rowIndex = Math.floor(pieceIndex / nombrePieces);
+        const colIndex = pieceIndex % nombrePieces;
+        const pieceParent = pieceElement.parentElement;
+        
+        if (pieceParent.classList.contains('puzzle__pieces--container')) {
+          const containerSizeWidth = containerSize;
+          const containerSizeHeight = containerSize * aspectRatio;
+          const numberPieces = nombrePieces;
+  
+          const pieceSize = containerSizeWidth / numberPieces;
+          const pieceSize2 = containerSizeHeight / numberPieces;
+  
+          const backgroundPosX = -colIndex * pieceSize;
+          const backgroundPosY = -rowIndex * pieceSize2;
+  
+          pieceElement.style.width = pieceSize + 'px';
+          pieceElement.style.height = pieceSize2 + 'px';
+          pieceElement.style.backgroundSize = containerSizeWidth + 'px ' + containerSizeHeight + 'px';
+          pieceElement.style.backgroundPosition = backgroundPosX + 'px ' + backgroundPosY + 'px';
+        } else {
+
+          const containerSizeWidth = pieceSize;
+          const containerSizeHeight = pieceSize * aspectRatio;
+  
+          const pieceSizeWidth = containerSizeWidth;
+          const pieceSizeHeight = containerSizeHeight;
+  
+          const backgroundPosX = -colIndex * pieceSizeWidth;
+          const backgroundPosY = -rowIndex * pieceSizeHeight;
+  
+          pieceElement.style.width = pieceSizeWidth + 'px';
+          pieceElement.style.height = pieceSizeHeight + 'px';
+          pieceElement.style.backgroundPosition = backgroundPosX + 'px ' + backgroundPosY + 'px';
+        }
+      });
+    }
+  }, [containerSize, nombrePieces, aspectRatio]);
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -27,7 +101,6 @@ export default function Game() {
     setImageUrl(URL.createObjectURL(formData.selectedImage));
     closeModal();
 
-    // Créer une nouvelle image pour obtenir l'aspect ratio
     const img = new Image();
     img.src = URL.createObjectURL(formData.selectedImage);
     img.onload = () => {
@@ -76,6 +149,11 @@ export default function Game() {
     }
   }
 
+  const resetPuzzle = () => {
+    
+  };
+  
+
   const totalPieces = nombrePieces * nombrePieces;
 
   return (
@@ -83,6 +161,7 @@ export default function Game() {
       <h1 className='game__title'>Créer votre puzzle personnalisé</h1>
       <p>créer vos propres puzzle</p>
       <img className='miniature' src={imageUrl} alt="" />
+      <button onClick={resetPuzzle}>Réinitialiser le puzzle</button>
       <button onClick={openModal}>Ouvrir le formulaire</button>
       <Modal isOpen={isModalOpen} onClose={closeModal} onFormSubmit={handleFormSubmit} />
       {nombrePieces && (
@@ -97,11 +176,10 @@ export default function Game() {
       )}
       <div className='container__pieces' onDragOver={handleDrag}>
         {Array.from({ length: totalPieces }).map((_, index) => {
-          // Calcul des coordonnées x et y pour chaque pièce
+
           const x = index % nombrePieces;
           const y = Math.floor(index / nombrePieces);
 
-          // Calcul de la position de fond pour chaque pièce
           const backgroundPositionX = -x * pieceSize + 'px';
           const backgroundPositionY = -y * pieceSize+ 'px';
 

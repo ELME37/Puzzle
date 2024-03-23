@@ -16,7 +16,6 @@ export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, n
             backgroundImage: `url("${imageUrl}")`,
             backgroundPosition: backgroundPosition,
             backgroundOrigin: "border-box",
-            /*backgroundPosition: `${-props.x * props.size}px ${-props.y * props.size}px`,*/
         }}
         id={id}
         draggable={true}
