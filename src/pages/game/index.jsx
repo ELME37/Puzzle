@@ -160,7 +160,6 @@ export default function Game() {
     <div className='game'>
       <h1 className='game__title'>Créer votre puzzle personnalisé</h1>
       <p>créer vos propres puzzle</p>
-      <img className='miniature' src={imageUrl} alt="" />
       <button onClick={resetPuzzle}>Réinitialiser le puzzle</button>
       <button onClick={openModal}>Ouvrir le formulaire</button>
       <Modal isOpen={isModalOpen} onClose={closeModal} onFormSubmit={handleFormSubmit} />
