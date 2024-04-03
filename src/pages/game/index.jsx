@@ -7,6 +7,8 @@ import './styles.css';
 
 export default function Game() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [nombrePiecesInit, setNombrePiecesInit] = useState('');
+  const [imageUrlInit, setImageUrlInit] = useState(null);
   const [nombrePieces, setNombrePieces] = useState('');
   const [imageUrl, setImageUrl] = useState(null);
   const [ratioImage, setRatioImage] = useState(null);
@@ -26,6 +28,11 @@ export default function Game() {
   } else {
     aspectRatio = 4/3;
   }
+
+  useEffect(() => {
+    setNombrePiecesInit(prevNomberPieces => prevNomberPieces || nombrePieces);
+    setImageUrlInit(prevImageUrl => prevImageUrl || imageUrl);
+  }, [nombrePieces, imageUrl]);
 
   useEffect(() => {
   
@@ -149,17 +156,23 @@ export default function Game() {
     }
   }
 
+  const restartPuzzle = () => {
+    setNombrePieces(nombrePiecesInit);
+    setImageUrl(imageUrlInit)
+  };
+
   const resetPuzzle = () => {
-    
+    setNombrePieces('');
+    setImageUrl(null)
   };
   
-
   const totalPieces = nombrePieces * nombrePieces;
 
   return (
     <div className='game'>
       <h1 className='game__title'>Créer votre puzzle personnalisé</h1>
       <p>créer vos propres puzzle</p>
+      <button onClick={restartPuzzle}>Recommencer</button>
       <button onClick={resetPuzzle}>Réinitialiser le puzzle</button>
       <button onClick={openModal}>Ouvrir le formulaire</button>
       <Modal isOpen={isModalOpen} onClose={closeModal} onFormSubmit={handleFormSubmit} />
@@ -195,6 +208,8 @@ export default function Game() {
           );
         })}
       </div>
+      <img src={imageUrl} alt="" />
+      <p>{nombrePieces}</p>
     </div>
   );
 }

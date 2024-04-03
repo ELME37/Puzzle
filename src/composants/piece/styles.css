@@ -4,5 +4,6 @@
     height: calc(var(--piece-size) * 1px);
     margin-right: 20px;
     background-size: calc(100% * var(--nombre-pieces)) calc(100% * var(--nombre-pieces));
+    border: 1px white solid;
     cursor: grab;
 }
