@@ -1,15 +1,19 @@
 import React from 'react';
+import { useDrag } from 'react-dnd';
 import './styles.css';
 
-export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, nombrePieces, pieceSize }) {
+export default function Piece ({id, imageUrl, backgroundPosition, nombrePieces, pieceSize }) {
 
-    const handleDragStart = (event) => {
-        onDragStart(event);
-        event.dataTransfer.setData("text", event.target.id);
-      };
+  const [{ isDragging }, drag] = useDrag({
+    type: 'PIECE',
+    item: { id, type: 'PIECE' },
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  });
       
   return (
-    <div className="piece" 
+    <div className={`piece ${isDragging ? 'piece--dragging' : ''}`}
         style={{
           '--nombre-pieces': nombrePieces,
           '--piece-size': pieceSize,
@@ -18,8 +22,7 @@ export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, n
             backgroundOrigin: "border-box",
         }}
         id={id}
-        draggable={true}
-        onDragStart={handleDragStart}
+        ref={drag}
         >
     </div>
   );
