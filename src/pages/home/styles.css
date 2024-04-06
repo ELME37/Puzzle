@@ -29,35 +29,34 @@
     width: calc(100% / 2);
     background-color: var(--darkbrown);
     border: 1px var(--white) solid;
-    
+}
 
-    &:nth-child(1) {
-        left: -100px;
-        top: -100px;
-        border-radius: 20px 0 0 0;
-        animation: logo11 3s ease forwards, border 1s ease-in-out forwards 3s;
-    }
+.partie1 {
+    left: -100px;
+    top: -100px;
+    border-radius: 20px 0 0 0;
+    animation: logo11 3s ease forwards, border 1s ease-in-out forwards 3s;
+}
 
-    &:nth-child(2) {
-        top: -100px;
-        right: -100px;
-        border-radius: 0 20px 0 0;
-        animation: logo12 3s ease forwards, border 1s ease-in-out forwards 3s;
-    }
+.partie2 {
+    top: -100px;
+    right: -100px;
+    border-radius: 0 20px 0 0;
+    animation: logo12 3s ease forwards, border 1s ease-in-out forwards 3s;
+}
 
-    &:nth-child(3) {
-        left: -100px;
-        bottom: -100px;
-        border-radius: 0 0 0 20px;
-        animation: logo21 3s ease forwards, border 1s ease-in-out forwards 3s;
-    }
+.partie3 {
+    left: -100px;
+    bottom: -100px;
+    border-radius: 0 0 0 20px;
+    animation: logo21 3s ease forwards, border 1s ease-in-out forwards 3s;
+}
 
-    &:nth-child(4) {
-        right: -100px;
-        bottom: -100px;
-        border-radius: 0 0 20px 0;
-        animation: logo22 3s ease forwards, border 1s ease-in-out forwards 3s;
-    }
+.partie4 {
+    right: -100px;
+    bottom: -100px;
+    border-radius: 0 0 20px 0;
+    animation: logo22 3s ease forwards, border 1s ease-in-out forwards 3s;
 }
 
 @keyframes logo11 {

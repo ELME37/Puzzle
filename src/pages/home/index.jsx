@@ -17,10 +17,10 @@ export default function Home () {
             <div className='home'>
                 <h1 className='home__title'>Créer votre puzzle personnalisé</h1>
                 <div className='container__images'>
-                    <img className='logo' src={logo1} alt="logo" />
-                    <img className='logo' src={logo2} alt="logo" />
-                    <img className='logo' src={logo3} alt="logo" />
-                    <img className='logo' src={logo4} alt="logo" />
+                    <img className='logo partie1' src={logo1} alt="logo" />
+                    <img className='logo partie2' src={logo2} alt="logo" />
+                    <img className='logo partie3' src={logo3} alt="logo" />
+                    <img className='logo partie4' src={logo4} alt="logo" />
                 </div>
                 <FormNumberPieces/>
             </div>
