@@ -1,74 +1,50 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 
-function Formulaire() {
-  // États pour le prénom, le nom et leurs copies initiales
-  const [prenom, setPrenom] = useState('');
-  const [nom, setNom] = useState('');
-  const [prenomInit, setPrenomInit] = useState('');
-  const [nomInit, setNomInit] = useState('');
+function Test() {
+  const initialTotalPieces = 5;
+  const [totalPieces, setTotalPieces] = useState(initialTotalPieces);
+  const divRefs = useRef([]);
 
-  // Effet pour mettre à jour les copies initiales lors du montage du composant
-  useEffect(() => {
-    // Utilisation d'une fonction de rappel pour définir les valeurs initiales
-    setPrenomInit(prevPrenom => prevPrenom || prenom);
-    setNomInit(prevNom => prevNom || nom);
-  }, [prenom, nom]);
+  const handleInit = () => {
+    // Supprime toutes les div existantes
+    divRefs.current.forEach(div => div.remove());
 
-  // Fonction pour réinitialiser les valeurs à leurs copies initiales
-  const resetToInitialValues = () => {
-    setPrenom(prenomInit);
-    setNom(nomInit);
+    // Crée le nombre initial de div
+    for (let i = 0; i < initialTotalPieces; i++) {
+      const newDiv = document.createElement("div");
+      newDiv.textContent = `Div ${i + 1}`;
+      divRefs.current.push(newDiv);
+      document.body.appendChild(newDiv);
+    }
+
+    setTotalPieces(initialTotalPieces);
   };
 
-  // Gestionnaires d'événements pour la modification du prénom et du nom
-  const handlePrenomChange = (e) => {
-    setPrenom(e.target.value);
+  const handleCreateDiv = () => {
+    // Crée une nouvelle div
+    const newDiv = document.createElement("div");
+    newDiv.textContent = `Div ${totalPieces + 1}`;
+    divRefs.current.push(newDiv);
+    document.body.appendChild(newDiv);
+    setTotalPieces(prevTotalPieces => prevTotalPieces + 1);
   };
 
-  const handleNomChange = (e) => {
-    setNom(e.target.value);
-  };
-
-  const handleClear = () => {
-    setPrenom('')
-    setNom('')
-  };
-
-  const handleClearInit = () => {
-    setPrenomInit('')
-    setNomInit('')
-  };
-
-  const handleNomandPrenom = () => {
-    console.log(nom, prenom)
-    console.log(nomInit, prenomInit)
+  const handleRemoveDiv = () => {
+    // Supprime la dernière div
+    if (totalPieces > 0) {
+      const lastDiv = divRefs.current.pop();
+      lastDiv.remove();
+      setTotalPieces(prevTotalPieces => prevTotalPieces - 1);
+    }
   };
 
   return (
     <div>
-      <form>
-        <label htmlFor="prenom">Prénom :</label>
-        <input
-          type="text"
-          id="prenom"
-          value={prenom}
-          onChange={handlePrenomChange}
-        />
-        <br />
-        <label htmlFor="nom">Nom :</label>
-        <input
-          type="text"
-          id="nom"
-          value={nom}
-          onChange={handleNomChange}
-        />
-      </form>
-      <button onClick={resetToInitialValues}>Réinitialiser</button>
-      <button onClick={handleNomandPrenom}>Soumettre</button>
-      <button onClick={handleClear}>Vider les données</button>
-      <button onClick={handleClearInit}>Vider les données initiales</button>
+      <button onClick={handleInit}>Init</button>
+      <button onClick={handleCreateDiv}>Créer une div</button>
+      <button onClick={handleRemoveDiv}>Supprimer une div</button>
     </div>
   );
 }
 
-export default Formulaire;
+export default Test;

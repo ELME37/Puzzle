@@ -1,23 +1,49 @@
 import React, { useState } from 'react';
+import { useDispatch} from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
-function FormNumberPieces({ onFormSubmit }) {
-  const [nombrePieces, setNombrePieces] = useState('');
+import { setInitialConfiguration } from '../../features/gameSlice';
+import routes from '../../router/routes';
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onFormSubmit({ nombrePieces });
+import './styles.css';
+
+export default function FormNumberPieces() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const [numberPieces, setNumberPieces] = useState('');
+  const [pieceImage, setPieceImage] = useState(null);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    
+    if (numberPieces && pieceImage) {
+      dispatch(setInitialConfiguration({
+        numbersPieces:numberPieces,
+        imageUrl: URL.createObjectURL(pieceImage),
+      }));
+      navigate(routes.game)
+
+    } else {
+      alert('Veuillez remplir tous les champs.');
+    }
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setPieceImage(file);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className='form' onSubmit={handleSubmit}>
       <label>
         Nombre de pièces :
         <select
-          value={nombrePieces}
-          onChange={(e) => setNombrePieces(e.target.value)}
+          value={numberPieces}
+          onChange={(e) => setNumberPieces(e.target.value)}
           required
         >
-          <option value="">Sélectionnez le nombre de pièces</option>
+          <option value="" disabled>Nbre de pièces</option>
           <option value="2">4 pièces</option>
           <option value="3">9 pièces</option>
           <option value="4">16 pièces</option>
@@ -30,9 +56,8 @@ function FormNumberPieces({ onFormSubmit }) {
         </select>
       </label>
       <br />
-      <button type="submit">Soumettre</button>
+      <input type="file" accept="image/*" required onChange={handleImageChange} />
+      <button className='buttonForm' type="submit">Jouer</button>
     </form>
   );
 }
-
-export default FormNumberPieces;

@@ -7,3 +7,8 @@
     border: 1px white solid;
     cursor: grab;
 }
+
+.puzzle__pieces--container .piece {
+    margin-right: 0;
+    border: none;
+}
