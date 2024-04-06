@@ -1,50 +1,44 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import './styles.css'; // Assurez-vous d'avoir un fichier CSS pour styliser votre composant
 
-function Test() {
-  const initialTotalPieces = 5;
-  const [totalPieces, setTotalPieces] = useState(initialTotalPieces);
-  const divRefs = useRef([]);
+const DragAndDrop = () => {
+  const [dragging, setDragging] = useState(false);
 
-  const handleInit = () => {
-    // Supprime toutes les div existantes
-    divRefs.current.forEach(div => div.remove());
-
-    // Crée le nombre initial de div
-    for (let i = 0; i < initialTotalPieces; i++) {
-      const newDiv = document.createElement("div");
-      newDiv.textContent = `Div ${i + 1}`;
-      divRefs.current.push(newDiv);
-      document.body.appendChild(newDiv);
-    }
-
-    setTotalPieces(initialTotalPieces);
+  const handleTouchStart = (e) => {
+    setDragging(true);
+    const touch = e.touches[0];
+    e.currentTarget.style.position = 'absolute';
+    e.currentTarget.style.left = `${touch.clientX - e.currentTarget.offsetWidth / 2}px`;
+    e.currentTarget.style.top = `${touch.clientY - e.currentTarget.offsetHeight / 2}px`;
+    e.currentTarget.style.transition = 'none'; // Désactiver les transitions pendant le déplacement pour une expérience plus fluide
+    document.body.style.overflow = 'hidden'; // Désactiver le défilement du corps pendant le déplacement
   };
 
-  const handleCreateDiv = () => {
-    // Crée une nouvelle div
-    const newDiv = document.createElement("div");
-    newDiv.textContent = `Div ${totalPieces + 1}`;
-    divRefs.current.push(newDiv);
-    document.body.appendChild(newDiv);
-    setTotalPieces(prevTotalPieces => prevTotalPieces + 1);
+  const handleTouchMove = (e) => {
+    if (dragging) {
+      const touch = e.touches[0];
+      e.currentTarget.style.left = `${touch.clientX - e.currentTarget.offsetWidth / 2}px`;
+      e.currentTarget.style.top = `${touch.clientY - e.currentTarget.offsetHeight / 2}px`;
+    }
   };
 
-  const handleRemoveDiv = () => {
-    // Supprime la dernière div
-    if (totalPieces > 0) {
-      const lastDiv = divRefs.current.pop();
-      lastDiv.remove();
-      setTotalPieces(prevTotalPieces => prevTotalPieces - 1);
-    }
+  const handleTouchEnd = (e) => {
+    setDragging(false);
+    e.currentTarget.style.transition = ''; // Rétablir les transitions une fois le déplacement terminé
+    document.body.style.overflow = ''; // Rétablir le défilement du corps une fois le déplacement terminé
+    // Ajoutez ici la logique pour gérer le relâchement de l'élément
   };
 
   return (
-    <div>
-      <button onClick={handleInit}>Init</button>
-      <button onClick={handleCreateDiv}>Créer une div</button>
-      <button onClick={handleRemoveDiv}>Supprimer une div</button>
+    <div className="drag-and-drop"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd} // Gérer le cas où le toucher est annulé
+    >
+      Drag me!
     </div>
   );
-}
+};
 
-export default Test;
+export default DragAndDrop;
