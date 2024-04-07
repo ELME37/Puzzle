@@ -7,6 +7,18 @@ export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, n
         onDragStart(event);
         event.dataTransfer.setData("text", event.target.id);
       };
+
+      const handleTouchStart = (event) => {
+        // Logique pour gérer le début de l'action tactile
+    };
+
+    const handleTouchMove = (event) => {
+        // Logique pour gérer le mouvement tactile
+    };
+
+    const handleTouchEnd = (event) => {
+        // Logique pour gérer la fin de l'action tactile
+    };
       
   return (
     <div className="piece" 
@@ -21,6 +33,9 @@ export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, n
         id={id}
         draggable={true}
         onDragStart={handleDragStart}
+        onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
         >
     </div>
   );
