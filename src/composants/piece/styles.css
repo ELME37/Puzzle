@@ -8,6 +8,10 @@
     cursor: grab;
 }
 
+.dragging {
+    border: 2px solid green;
+}
+
 .puzzle__pieces--container .piece {
     margin-right: 0;
     border: none;

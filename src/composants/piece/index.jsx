@@ -1,27 +1,22 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './styles.css';
 
 export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, nombrePieces, pieceSize }) {
+  const [dragging, setDragging] = useState(false);
 
     const handleDragStart = (event) => {
         onDragStart(event);
         event.dataTransfer.setData("text", event.target.id);
+        event.currentTarget.classList.add('dragging');
       };
-
-      const handleTouchStart = (event) => {
-        // Logique pour gérer le début de l'action tactile
-    };
-
-    const handleTouchMove = (event) => {
-        // Logique pour gérer le mouvement tactile
-    };
-
-    const handleTouchEnd = (event) => {
-        // Logique pour gérer la fin de l'action tactile
-    };
       
+    const handleDragEnd = (event) => {
+      setDragging(false);
+      event.currentTarget.classList.remove('dragging');
+    };
+    
   return (
-    <div className="piece" 
+    <div className={`piece ${dragging ? 'dragging' : ''}`} 
         style={{
           '--nombre-pieces': nombrePieces,
           '--piece-size': pieceSize,
@@ -33,9 +28,7 @@ export default function Piece ({id, imageUrl, onDragStart, backgroundPosition, n
         id={id}
         draggable={true}
         onDragStart={handleDragStart}
-        onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
+        onDragEnd={handleDragEnd}
         >
     </div>
   );

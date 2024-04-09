@@ -11,23 +11,29 @@ import Piece from '../../composants/piece';
 import './styles.css';
 
 export default function Game () {
-  const [containerSize, setContainerSize] = useState(600);
-  const [ratioImage, setRatioImage] = useState(null);
-  const divContainerRef = useRef(null);
 
   const dispatch = useDispatch();
   const game = useSelector(state => state.game);
-  const numberPiecesInit = game.initialNumberPieces;
-  const imageURLInit = game.initialImageUrl;
-  const numberPieces = game.currentNumberPieces;
-  const imageURL = game.currentImageUrl;
-  const numberPiecesTable = Array.from({ length: game.initialNumberPieces }, (_, index) => index);
-  const totalPiecesInit = game.initialNumberPieces * game.initialNumberPieces;
 
+  const divContainerRef = useRef(null);
+
+  const [containerSize, setContainerSize] = useState(600);
+  const [ratioImage, setRatioImage] = useState(null);
+  const [numberPieces, setNumberPieces] = useState(game.currentNumberPieces);
+  const [imageURL, setImageURL] = useState(game.currentImageUrl);
   const [totalPieces, setTotalPieces] = useState(numberPieces * numberPieces);
 
+  console.log(totalPieces)
+
+  const numberPiecesInit = game.initialNumberPieces;
+  const imageURLInit = game.initialImageUrl;
+
+  const totalPiecesInit = numberPiecesInit * numberPiecesInit;
+
+  const numberPiecesTable = Array.from({ length: game.initialNumberPieces }, (_, index) => index);
+
   const maxWidth = 600;
-  const pieceSize = 100;
+  const pieceSize = 100; 
 
   const img = new Image();
   img.src = imageURL;
@@ -60,32 +66,36 @@ export default function Game () {
     event.preventDefault();
     let data = event.dataTransfer.getData("text");
     let target = event.target;
-
+  
     if (target.classList.contains('puzzle__pieces--container') && target.children.length === 0) {
-        target.appendChild(document.getElementById(data));
+      const containers = document.querySelectorAll('.puzzle__pieces--container');
+      containers.forEach(container => {
+        container.style.border = 'none';
+      });
+  
+      target.appendChild(document.getElementById(data));
+  
+      const pieceId = parseInt(data.split('_')[1]);
+      const containerId = parseInt(target.id.split('_')[1]);
+      
+      if (pieceId === containerId) {
+        target.style.border = '2px solid yellow';
+      }
     }
-    console.log('fonction handledrop')
-  };
-
+  }
+  
   const resetPuzzle = () => {
-    dispatch(setCurrentNumberPieces({
-      numbersPieces: '',
-      imageUrl: '',
-    }));
-
     divContainerRef.current.innerHTML = '';
+    setNumberPieces(0)
+    setImageURL('')
   };
 
  const restartPuzzle = () => {
-  dispatch(setCurrentNumberPieces({
-    numbersPieces: numberPiecesInit,
-    imageUrl: imageURLInit,
-  }));
+  setNumberPieces(numberPiecesInit)
+  setImageURL(imageURLInit)
 
-  divContainerRef.current.innerHTML = '';
-
-  // Crée le nombre initial de pièces et les ajoute au conteneur
-  for (let i = 0; i < numberPiecesInit * numberPiecesInit; i++) {
+  for (let i = 0; i < totalPiecesInit; i++) {
+    
     const x = i % numberPiecesInit;
     const y = Math.floor(i / numberPiecesInit);
     const backgroundPositionX = -x * pieceSize + 'px';
@@ -98,11 +108,12 @@ export default function Game () {
         onDragStart={handleDrag}
         backgroundPosition={`${backgroundPositionX} ${backgroundPositionY}`}
         nombrePieces={numberPiecesInit}
-        pieceSize={pieceSize}
+        pieceSize={50}
       />
-  
-    setTotalPieces(prevTotalPieces => prevTotalPieces + 1);
+      setTotalPieces(prevTotalPieces => prevTotalPieces + 1);
   }
+
+  
 };
 
   const endPuzzle = () => {
