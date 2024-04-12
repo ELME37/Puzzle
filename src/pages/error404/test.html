@@ -45,11 +45,11 @@
         height: 100%;
         background: var(--img);
         background-size: cover;
-        border: 2px solid transparent; /* Ajout d'une bordure transparente */
+        cursor: grab;
     }
 
     .images.highlight {
-        border-color: green; /* Changement de couleur de la bordure en vert */
+        border: 2px green solid;
     }
 
     .reset {
@@ -153,8 +153,8 @@
                 dropBox.appendChild(document.getElementById(data));
             }
 
-            let imageId = data.substring(5); // Récupérer uniquement le chiffre de l'ID de l'image
-            let dropBoxId = dropBox.id.substring(7); // Récupérer uniquement le chiffre de l'ID de la dropbox
+            let imageId = data.substring(5);
+            let dropBoxId = dropBox.id.substring(7);
 
             if(imageId === dropBoxId){
                 document.getElementById(data).classList.add('highlight');

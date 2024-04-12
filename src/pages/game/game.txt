@@ -1,0 +1,155 @@
+export default function Game ({ 
+        initNombrePieces,
+        initImage
+    }) {
+
+    const [isLoading, setIsLoading] => useState(true);
+    const [image, setImage] = useState();
+    const [ratioImage, setRatioImage] = useState();
+    const [containerWidth, setContainerWidth] = useState();
+
+    const [nombrePieces, setNombrePieces] = useState();
+    const [totalPieces, setTotalPieces] = useState();
+
+    const [pieceSize, setPieceSize] = useState({});
+
+    const [grid, setGrid] = useState([]);
+    const [deck, setDeck] = useState([]);
+
+    /**
+    * Initialise et lancement du jeu
+    **/
+    const reset = () => {
+
+        setNombrePieces(initNombrePieces)
+        setTotalPieces(initNombrePieces * initNombrePieces)
+        setPieceSize({
+            x: containerWidth / initNombrePieces (- margin si tu veux une margin),
+            y: // calcule avec x et le ratioImage => c'est cadeau
+        })
+
+        // Initialisation de la grille avec des pièces vides
+        const newGrid = [];
+        let counter = 0;
+        for(let row = 0; row < nombrePieces; row++){
+            const newRow = [];
+            for(let column = 0; column < nombrePieces; column++){
+                newRow.push({
+                    index : null, 
+                    xPositionBackground : null,
+                    yPositionBackground : null
+                })
+            }
+            newGrid.push(newRow)
+        }
+
+
+        // Initialisation du deck
+        const newDeck = [];
+        let counter = 0;
+        for(let row = 0; row < nombrePieces; row++){
+            for(let column = 0; column < nombrePieces; column++){
+                newDeck.push({
+                    counter : counter++, 
+                    xPositionBackground : column,
+                    yPositionBackground : row
+                })
+            }
+        }
+
+        setIsLoading(false)
+    }
+
+    /**
+    * Déplacement d'une pièce
+    */
+    const handleDragStart = () => {
+    
+    }
+
+    /**
+    * Dépose d'une pièce
+    **/
+    const handleDragOver = (piece, target) => {
+        // On modifie la position des pieces dans la grid en fonction de target
+    }
+
+
+    useEffect(() => {
+
+        /**
+        * Chargement de l'image de fond de pièces
+        **/
+        const loadBackgroundImage = () => {          
+            const newImage = new Image();
+            newImage.src = initImage
+            newImage.onLoad = () => {
+                setRatioImage(newImage.width - newImage.height)
+
+                // Initialisation et lancement du jeu
+                reset();
+            }
+        }
+
+        /**
+         * Update de la taille du container en fonction de l'écran
+         * ce qui impliquera une modification taille de pièces
+         **/
+        const resizeGrid = () => {              
+            setContainerWidth(Math.min(Math.floor(1 * window.innerWidth), maxWidth));
+        }
+
+        // Chargement de l'image de la pièce
+        loadBackgroundImage();
+
+
+        // Modification de la taille de la grille en fonction de l'écran
+        window.addEventListener('resize', resizeGrid);
+        return () => {
+            window.removeEventListener('resize', resizeGrid);
+        }
+    }, [])
+
+    return (<div>
+            <div>
+                <button onClick={reset}>Reset</button>
+                <button>Restart</button>
+            </div>
+            <div>
+                {!isLoading && <DndContext>
+                    <div className={'deck'}>
+                            {deck.map((item, index) => <Piece 
+                                id={item.id}
+                                position={{
+                                    x: item.xPositionBackground,
+                                    y: item.yPositionBackground,
+                                }}
+                                image={image}
+                                size={pieceSize}
+                                handleDragStart={handleDragStart}
+                                handleDragOver={handleDragOver}
+                        />
+                        )}
+                    </div>
+
+                    <div className={'grid'}>
+
+                        // Affichage de la grille de jeu
+                        {grid.map((row, rowIndex) => {
+                            row.map((item, rowIndex) => <Piece 
+                                id={item.id}
+                                position={{
+                                    x: item.xPositionBackground,
+                                    y: item.yPositionBackground,
+                                }}
+                                image={image}
+                                size={pieceSize}
+                                handleDragStart={handleDragStart}
+                                handleDragOver={handleDragOver}
+                        />
+                        })}
+                    </div>
+                </DndContext>}
+            </div>
+        </div>)
+}

@@ -1,8 +1,6 @@
-import React, {useState, useEffect, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {useState, useEffect} from 'react';
+import { useSelector } from 'react-redux';
 import {DndContext} from '@dnd-kit/core';
-
-import { setCurrentNumberPieces} from '../../features/gameSlice';
 
 import Layout from '../../composants/layout';
 import Puzzle from '../../composants/puzzle';
@@ -12,29 +10,20 @@ import './styles.css';
 
 export default function Game () {
 
-  const dispatch = useDispatch();
   const game = useSelector(state => state.game);
-
-  const divContainerRef = useRef(null);
 
   const [containerSize, setContainerSize] = useState(600);
   const [ratioImage, setRatioImage] = useState(null);
-  const [numberPieces, setNumberPieces] = useState(game.currentNumberPieces);
-  const [imageURL, setImageURL] = useState(game.currentImageUrl);
-  const [totalPieces, setTotalPieces] = useState(numberPieces * numberPieces);
 
-  console.log(totalPieces)
-
-  const numberPiecesInit = game.initialNumberPieces;
-  const imageURLInit = game.initialImageUrl;
-
-  const totalPiecesInit = numberPiecesInit * numberPiecesInit;
-
-  const numberPiecesTable = Array.from({ length: game.initialNumberPieces }, (_, index) => index);
+  const numberPieces = game.initialNumberPieces;
+  const imageURL= game.initialImageUrl;
+  const totalPieces = numberPieces * numberPieces;
 
   const maxWidth = 600;
   const pieceSize = 100; 
 
+
+  
   const img = new Image();
   img.src = imageURL;
   img.onload = () => {
@@ -83,38 +72,41 @@ export default function Game () {
       }
     }
   }
-  
-  const resetPuzzle = () => {
-    divContainerRef.current.innerHTML = '';
-    setNumberPieces(0)
-    setImageURL('')
-  };
 
- const restartPuzzle = () => {
-  setNumberPieces(numberPiecesInit)
-  setImageURL(imageURLInit)
-
-  for (let i = 0; i < totalPiecesInit; i++) {
-    
-    const x = i % numberPiecesInit;
-    const y = Math.floor(i / numberPiecesInit);
+  const createPiece = (index) => {
+    const x = index % numberPieces;
+    const y = Math.floor(index / numberPieces);
     const backgroundPositionX = -x * pieceSize + 'px';
     const backgroundPositionY = -y * pieceSize + 'px';
 
+    return (
       <Piece
-        key={i}
-        id={`piece_${i}`}
+        key={index}
+        id={`piece_${index}`}
         imageUrl={imageURL}
         onDragStart={handleDrag}
         backgroundPosition={`${backgroundPositionX} ${backgroundPositionY}`}
-        nombrePieces={numberPiecesInit}
-        pieceSize={50}
+        nombrePieces={numberPieces}
+        pieceSize={pieceSize}
       />
-      setTotalPieces(prevTotalPieces => prevTotalPieces + 1);
-  }
-
+    );
+  };
   
-};
+  const resetPuzzle = () => {
+    const container = document.querySelector('.container__pieces');
+    const pieces = container.querySelectorAll('div');
+    pieces.forEach(piece => container.removeChild(piece));
+  };
+
+  const restartPuzzle = () => {
+    const container = document.querySelector('.container__pieces');
+    container.innerHTML = '';
+  
+    for (let i = 1; i <= totalPieces; i++) {
+      const pieceElement = createPiece(i);
+      container.appendChild(pieceElement);
+    }
+  };
 
   const endPuzzle = () => {
     
@@ -130,34 +122,17 @@ export default function Game () {
           <Puzzle
             nombrePieces={numberPieces}
             containerSize={containerSize}
-            totalPieces={totalPiecesInit}
+            totalPieces={totalPieces}
             onDrop={handleDrop}
             allowDrop={handleAllowDrop}
             ratioImage={ratioImage}
           />
         )}
 
-        <div ref={divContainerRef}  className='container__pieces' onDragOver={handleDrag}>
-          {Array.from({ length: totalPieces }).map((_, index) => {
-
-            const x = index % numberPieces;
-            const y = Math.floor(index / numberPieces);
-
-            const backgroundPositionX = -x * pieceSize + 'px';
-            const backgroundPositionY = -y * pieceSize+ 'px';
-
-            return (
-              <Piece 
-                key={index}
-                id={`piece_${index}`}
-                imageUrl={imageURL}
-                onDragStart={handleDrag}
-                backgroundPosition={`${backgroundPositionX} ${backgroundPositionY}`}
-                nombrePieces={numberPiecesInit}
-                pieceSize={pieceSize}
-              />
-            );
-          })}
+        <div className='container__pieces' onDragOver={handleDrag}>
+            {Array.from({ length: totalPieces }).map((_, index) => (
+              createPiece(index)
+            ))}
         </div>
         </div>
         </DndContext>

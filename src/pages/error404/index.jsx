@@ -1,44 +1,43 @@
 import React, { useState } from 'react';
-import './styles.css'; // Assurez-vous d'avoir un fichier CSS pour styliser votre composant
 
-const DragAndDrop = () => {
-  const [dragging, setDragging] = useState(false);
+import './styles.css'
 
-  const handleTouchStart = (e) => {
-    setDragging(true);
-    const touch = e.touches[0];
-    e.currentTarget.style.position = 'absolute';
-    e.currentTarget.style.left = `${touch.clientX - e.currentTarget.offsetWidth / 2}px`;
-    e.currentTarget.style.top = `${touch.clientY - e.currentTarget.offsetHeight / 2}px`;
-    e.currentTarget.style.transition = 'none'; // Désactiver les transitions pendant le déplacement pour une expérience plus fluide
-    document.body.style.overflow = 'hidden'; // Désactiver le défilement du corps pendant le déplacement
+const Error404 = () => {
+  const [numberPieces, setNumberPieces] = useState(2);
+  const [totalPieces, setTotalPieces] = useState(numberPieces * numberPieces);
+
+  const createPiece = (id) => {
+    const p = document.createElement('p');
+    p.textContent = id;
+    p.id = id;
+    return p;
   };
 
-  const handleTouchMove = (e) => {
-    if (dragging) {
-      const touch = e.touches[0];
-      e.currentTarget.style.left = `${touch.clientX - e.currentTarget.offsetWidth / 2}px`;
-      e.currentTarget.style.top = `${touch.clientY - e.currentTarget.offsetHeight / 2}px`;
+  const modification = () => {
+    const container = document.querySelector('.containerPieces');
+    const pieces = container.querySelectorAll('p');
+    pieces.forEach(piece => container.removeChild(piece));
+  };
+
+  const reset = () => {
+    const container = document.querySelector('.containerPieces');
+    container.innerHTML = '';
+    for (let i = 1; i <= totalPieces; i++) {
+      container.appendChild(createPiece(i));
     }
   };
 
-  const handleTouchEnd = (e) => {
-    setDragging(false);
-    e.currentTarget.style.transition = ''; // Rétablir les transitions une fois le déplacement terminé
-    document.body.style.overflow = ''; // Rétablir le défilement du corps une fois le déplacement terminé
-    // Ajoutez ici la logique pour gérer le relâchement de l'élément
-  };
-
   return (
-    <div className="drag-and-drop"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd} // Gérer le cas où le toucher est annulé
-    >
-      Drag me!
+    <div className='error404'>
+      <div className='containerPieces'>
+      {Array.from({ length: totalPieces }).map((_, index) => (
+        <p id={index + 1} key={index + 1}>{index + 1}</p>
+      ))}
+      </div>
+      <button onClick={modification}>modification</button>
+      <button onClick={reset}>reset</button>
     </div>
   );
 };
 
-export default DragAndDrop;
+export default Error404;

@@ -1,0 +1,34 @@
+
+/**
+* Affichage d'une pièce + détection du dragStart et dragOver
+**/
+export default function Piece ({
+    id,
+    position,
+    image,
+    size,
+    handleDragStart,
+    handleDragOver
+}) {
+
+    const [isDraging, setIsDragging] = useState(false);
+
+    const onDragStart = (event) => {
+        handleDragStart(event)
+        setIsDragging(true)
+    }
+    const onDragEnd = (event) => {
+        handleDragOver(event)
+        setIsDragging(false)
+    }
+
+    return (<div
+        id={id}
+        draggable={true}
+        onDragStart={onDragStart}
+        onDragEnd={onDragEnd}
+        className={isDraging && 'dragging'}
+        >
+        <div className={'background'}></div>
+    </div>)
+}
